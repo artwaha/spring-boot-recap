@@ -29,7 +29,7 @@ public class SchoolController {
     }
 
     @GetMapping
-    List<SchoolResponse> getAllSchools() {
+    ResponseEntity<ApiResponse<List<SchoolResponse>>> getAllSchools() {
         return schoolService.getAllSchools();
     }
 
@@ -40,7 +40,7 @@ public class SchoolController {
 //                    @Parameter(name = "school-id", required = true, example = "123")
 //            }
 //    )
-    SchoolResponse updateSchool(@Valid @PathVariable(name = "school-id") Long schoolId, @Valid @RequestBody SchoolRequest schoolRequest) {
+    ResponseEntity<ApiResponse<SchoolResponse>> updateSchool(@Valid @PathVariable(name = "school-id") Long schoolId, @Valid @RequestBody SchoolRequest schoolRequest) {
         return schoolService.updateSchool(schoolId, schoolRequest);
     }
 }
