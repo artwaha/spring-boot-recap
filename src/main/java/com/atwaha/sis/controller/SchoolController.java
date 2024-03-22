@@ -1,5 +1,6 @@
 package com.atwaha.sis.controller;
 
+import com.atwaha.sis.model.dto.ApiCollectionResponse;
 import com.atwaha.sis.model.dto.ApiResponse;
 import com.atwaha.sis.model.dto.SchoolRequest;
 import com.atwaha.sis.model.dto.SchoolResponse;
@@ -29,8 +30,8 @@ public class SchoolController {
     }
 
     @GetMapping
-    ResponseEntity<ApiResponse<List<SchoolResponse>>> getAllSchools() {
-        return schoolService.getAllSchools();
+    ResponseEntity<ApiCollectionResponse<SchoolResponse>> getAllSchools(@Valid @RequestParam(defaultValue = "0", required = false) int pageNumber, @Valid @RequestParam(defaultValue = "10", required = false) int pageSize) {
+        return schoolService.getAllSchools(pageNumber, pageSize);
     }
 
     @PatchMapping("{school-id}")
