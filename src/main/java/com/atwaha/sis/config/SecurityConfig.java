@@ -14,6 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.atwaha.sis.model.enums.Role.ADMIN;
+import static com.atwaha.sis.model.enums.Role.MANAGER;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,12 +29,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeHttpRequests ->
-                        authorizeHttpRequests
-                                .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                .authorizeHttpRequests(authorizeRequests -> {
+                            authorizeRequests
+                                    .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
+                                    .permitAll();
+
+                            authorizeRequests
+                                    .requestMatchers("/api/v1/management/**")
+                                    .hasAnyRole(ADMIN.name(), MANAGER.name());
+
+                            authorizeRequests
+                                    .requestMatchers("/api/v1/admin/**")
+                                    .hasRole(ADMIN.name());
+
+                            authorizeRequests
+                                    .anyRequest()
+                                    .authenticated();
+                        }
                 ).sessionManagement(sessionManagement ->
                         /*Since every request is authenticated, we need the session creation policy to be stateless*/
                         sessionManagement

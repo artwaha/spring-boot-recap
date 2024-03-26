@@ -5,7 +5,6 @@ import com.atwaha.sis.model.dto.AuthResponse;
 import com.atwaha.sis.model.dto.LoginRequest;
 import com.atwaha.sis.model.dto.RegisterRequest;
 import com.atwaha.sis.model.entities.User;
-import com.atwaha.sis.model.enums.Role;
 import com.atwaha.sis.repository.UserRepository;
 import com.atwaha.sis.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         User newUser = modelMapper.map(request, User.class);
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(Role.USER);
 
         User savedUser = userRepository.save(newUser);
         String token = jwtService.generateToken(savedUser);
