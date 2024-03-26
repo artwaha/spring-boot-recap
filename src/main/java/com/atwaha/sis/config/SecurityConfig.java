@@ -1,9 +1,11 @@
 package com.atwaha.sis.config;
 
 import com.atwaha.sis.security.JwtAuthenticationFilter;
+import com.atwaha.sis.security.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-//    private final CustomAuthenticationEntryPoint unauthorizedAccessHandler;
+    private final LogoutService logoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +37,16 @@ public class SecurityConfig {
                         sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> {
+                    logout.logoutUrl("/api/v1/auth/logout");
+                    logout.addLogoutHandler(logoutHandler);
+                    logout.clearAuthentication(true);
+                    logout.logoutSuccessHandler((request, response, authentication) -> {
+                        response.setStatus(HttpStatus.OK.value());
+                    });
+                    logout.clearAuthentication(true);
+                });
         return http.build();
     }
 }

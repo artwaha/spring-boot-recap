@@ -1,7 +1,7 @@
 package com.atwaha.sis.service;
 
 import com.atwaha.sis.components.DTOmapper;
-import com.atwaha.sis.components.UtilityMethods;
+import com.atwaha.sis.components.Utils;
 import com.atwaha.sis.model.dto.ApiCollectionResponse;
 import com.atwaha.sis.model.dto.ApiResponse;
 import com.atwaha.sis.model.dto.SchoolRequest;
@@ -24,7 +24,7 @@ import java.util.List;
 public class SchoolService {
     private final SchoolRepository schoolRepository;
     private final DTOmapper dtOmapper;
-    private final UtilityMethods util;
+    private final Utils util;
 
     public ResponseEntity<ApiResponse<SchoolResponse>> addSchool(SchoolRequest school) {
         School savedSchool = schoolRepository.save(dtOmapper.schoolRequestDTOtoSchoolEntity(school));
