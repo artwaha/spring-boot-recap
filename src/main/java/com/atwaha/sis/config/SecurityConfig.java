@@ -5,7 +5,6 @@ import com.atwaha.sis.security.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +12,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+
+import static com.atwaha.sis.model.enums.Role.ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -26,12 +28,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeHttpRequests ->
-                        authorizeHttpRequests
-                                .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                .authorizeHttpRequests(requests -> {
+
+                            requests
+                                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/login")
+                                    .permitAll();
+                            requests
+                                    .requestMatchers("/api/v1/auth/register")
+                                    .hasRole(ADMIN.name());
+
+                            requests
+                                    .anyRequest()
+                                    .authenticated();
+                        }
                 ).sessionManagement(sessionManagement ->
                         /*Since every request is authenticated, we need the session creation policy to be stateless*/
                         sessionManagement
@@ -41,11 +50,7 @@ public class SecurityConfig {
                 .logout(logout -> {
                     logout.logoutUrl("/api/v1/auth/logout");
                     logout.addLogoutHandler(logoutHandler);
-                    logout.clearAuthentication(true);
-                    logout.logoutSuccessHandler((request, response, authentication) -> {
-                        response.setStatus(HttpStatus.OK.value());
-                    });
-                    logout.clearAuthentication(true);
+                    logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
                 });
         return http.build();
     }

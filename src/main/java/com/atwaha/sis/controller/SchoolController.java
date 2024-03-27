@@ -6,19 +6,17 @@ import com.atwaha.sis.model.dto.SchoolRequest;
 import com.atwaha.sis.model.dto.SchoolResponse;
 import com.atwaha.sis.service.SchoolService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/v1/schools")
 @RequiredArgsConstructor
-//@SecurityRequirement(name = "JWT - Bearer Authentication")
-
+@SecurityRequirement(name = "JWT")
 @Tag(name = "School")
 public class SchoolController {
     private final SchoolService schoolService;

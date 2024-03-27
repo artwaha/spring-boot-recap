@@ -4,6 +4,7 @@ import com.atwaha.sis.model.dto.AuthResponse;
 import com.atwaha.sis.model.dto.LoginRequest;
 import com.atwaha.sis.model.dto.RegisterRequest;
 import com.atwaha.sis.service.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
+    @SecurityRequirement(name = "JWT")
     @PostMapping("register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
