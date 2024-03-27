@@ -13,7 +13,6 @@ import static com.atwaha.sis.model.enums.Role.ADMIN;
 import static com.atwaha.sis.model.enums.Role.USER;
 
 @SpringBootApplication
-@EnableJpaAuditing
 @RequiredArgsConstructor
 public class SchoolInformationSystemApplication implements CommandLineRunner {
     private final AuthService authService;
